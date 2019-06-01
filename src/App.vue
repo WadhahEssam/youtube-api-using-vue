@@ -1,14 +1,16 @@
 <template>
   <div>
     <h1>Search In Youtube</h1>
-    <SearchBar @termChangedEvent="termChanged"></SearchBar>
+    <SearchBar @termChangedEvent="termChanged" />
+    <VideoList :videos="videos" />
   </div>
 </template>
 
 <script>
 import SearchBar from './components/SearchBar';
+import VideoList from './components/VideoList'
 import searchYoutube from 'youtube-api-v3-search';
-const API = 'AIzaSyBKEiICVjCPdwpnaJhvdTf1zWvJc4suiQQ';
+const API_KEY = 'AIzaSyBKEiICVjCPdwpnaJhvdTf1zWvJc4suiQQ';
 
 export default {
   name: 'App',
@@ -16,16 +18,24 @@ export default {
   // it is not like react where all you have
   // to do is to import the component  
   components: {
-    SearchBar
+    SearchBar,
+    VideoList
+  },
+  data() {
+    return {
+      term: '',
+      videos: [],
+    }
   },
   methods: {
     async termChanged(term) {
-      let videos = await searchYoutube(API,{
+      this.term = term;
+      let videos = await searchYoutube(API_KEY, {
         q: term,
         part: 'snippet',
         type:'video',
       });
-      console.log(videos);
+      this.videos = videos.items;
     }
   }
 }
